@@ -6,6 +6,7 @@
 
 #include <string>
 #include "KittyMemory.h"
+#include <limits.h>
 
 
 using KittyMemory::Memory_Status;

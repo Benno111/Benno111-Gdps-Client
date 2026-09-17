@@ -3,7 +3,7 @@
 #include "DrawGridLayer.h"
 #include "GJGroundLayer.h"
 #include "UndoObject.h"
-#include "obb2d.h"
+#include "OBB2D.h"
 #include "EditorUI.h"
 #include "GJBaseGameLayer.h"
 #include "LevelSettingsDelegate.h"

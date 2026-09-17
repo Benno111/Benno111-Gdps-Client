@@ -31,6 +31,7 @@
 #include "ZLIB/zlib.h"
 #include <string>
 #include <iostream>
+#include <numeric>
 #include <cocos2dx/extensions/CCScale9Sprite.h>
 #include "LevelBrowserLayer.h"
 #include "GJSearchObject.h"

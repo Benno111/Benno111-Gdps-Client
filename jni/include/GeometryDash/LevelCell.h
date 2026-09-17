@@ -2,7 +2,7 @@
 
 #include <cocos2dx/CCLayer.h>
 #include "FLAlertLayer.h"
-#include "GJUserscore.h"
+#include "GJUserScore.h"
 #include "GJGameLevel.h"
 #include "GDAPI_Macros.h"
 

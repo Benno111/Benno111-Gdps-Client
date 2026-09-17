@@ -5,6 +5,7 @@
 #include <string>
 #include "CCArray.h"
 #include "CCString.h"
+#include <cstdint>
 
 NS_CC_BEGIN
 
