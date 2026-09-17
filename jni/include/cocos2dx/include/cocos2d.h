@@ -32,7 +32,8 @@ static __TYPE__* create() \
 #define GPY() getPositionY()
 #define GPX() getPositionX()
 
-#define version2 2212
+#include "GDPSVersion.h"
+#define version2 GDPS_VERSION_CODE
 
 
 #define __STR_CAT___(str1, str2) str1##str2

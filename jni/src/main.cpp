@@ -22,6 +22,7 @@
 #include "hooks/CreatorLayerExt.h"
 #include "hooks/onPlaytestExt.h"
 #include "GDPSManager.h"
+#include "GDPSVersion.h"
 #include "StorageExporter.h"
 #include "layers/GDPSSettings.h"
 #include <gd.h>
@@ -2166,7 +2167,7 @@ void ParticleOnCloseH(CCObject *a1)
 void (*restoreO)(CCObject *);
 void restoreH(CCObject *a1)
 {
-	FLAlertLayer::create(nullptr, "GDPS", "GDPS Editor 2.2.1.3\nBeta 7", "OK", nullptr, 400, false, 300)->show();
+	FLAlertLayer::create(nullptr, "GDPS", "GDPS Editor " GDPS_VERSION_STRING "\nBeta 7", "OK", nullptr, 400, false, 300)->show();
 }
 
 bool (*infoButton)(string, string, float);

@@ -11,6 +11,7 @@
 #include "Encryption/Encryption.h"
 #include "ZLIB/zlib.h"
 #include "GDPSManager.h"
+#include "GDPSVersion.h"
 #include "obfuscate.h"
 #include "layers/advancedOptionsLayer.h"
 #include "layers/CreditsLayer.h"
@@ -183,6 +184,19 @@ bool MenuLayerExt::init_hk()
 {
 
 	auto ret = init_trp(this);
+	if (!ret)
+	{
+		return false;
+	}
+
+	// Identify the running build as soon as the initial menu is available.
+	// MenuLayer may be recreated later, so only show the startup notice once.
+	static bool didShowVersion = false;
+	if (!didShowVersion)
+	{
+		didShowVersion = true;
+		FLAlertLayer::create(nullptr, "GDPS Editor SubZero", "Version " GDPS_VERSION_STRING, "OK", nullptr, 400, false, 300)->show();
+	}
 
 	extern bool addBadges;
 	addBadges = true;
