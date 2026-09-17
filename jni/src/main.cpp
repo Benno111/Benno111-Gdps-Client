@@ -27,8 +27,8 @@
 #include <gd.h>
 #include <hooking.h>
 #include <CCFileUtils.h>
-#include "../Encryption/Encryption.h"
-#include "../ZLIB/zlib.h"
+#include "Encryption/Encryption.h"
+#include "ZLIB/zlib.h"
 #include <string>
 #include <iostream>
 #include <cocos2dx/extensions/CCScale9Sprite.h>

@@ -51,10 +51,10 @@ LOCAL_DISABLE_FORMAT_STRING_CHECKS := true
 LOCAL_SHARED_LIBRARIES := cocos2dcpp hooking shira
 TARGET_ARCH_ABI := all
 LOCAL_C_INCLUDES += $(LOCAL_PATH)/include \
-LOCAL_C_INCLUDES += $(LOCAL_PATH)/include/includes \
-LOCAL_C_INCLUDES += $(LOCAL_PATH)/include/hooks \
-LOCAL_C_INCLUDES += $(LOCAL_PATH)/include/KittyMemory \
-LOCAL_C_INCLUDES += $(LOCAL_PATH)/include/layers \
+	$(LOCAL_PATH)/include/includes \
+	$(LOCAL_PATH)/include/hooks \
+	$(LOCAL_PATH)/include/KittyMemory \
+	$(LOCAL_PATH)/include/layers
 
 LOCAL_SRC_FILES := 	src/main.cpp \
 					src/hooks/onPlaytestExt.cpp \

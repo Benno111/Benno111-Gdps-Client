@@ -1,21 +1,21 @@
 #include <ColoursPalette.h>
 #include <sstream>
-#include "../cocos2dx/extensions/network/HttpClient.h"
-#include "../cocos2dx/extensions/network/HttpRequest.h"
-#include "../cocos2dx/extensions/network/HttpResponse.h"
+#include "cocos2dx/extensions/network/HttpClient.h"
+#include "cocos2dx/extensions/network/HttpRequest.h"
+#include "cocos2dx/extensions/network/HttpResponse.h"
 #include "cocos2d.h"
 #include "rapidjson/rapidjson.h"
 #include "rapidjson/document.h"
 #include "patch.h"
 #include "KittyMemory.h"
-#include "../Encryption/Encryption.h"
-#include "../ZLIB/zlib.h"
-#include "../GDPSManager.h"
-#include "../obfuscate.h"
-#include "../layers/advancedOptionsLayer.h"
-#include "../layers/CreditsLayer.h"
-#include "../layers/ToolsLayer.h"
-#include "../../include/hooks/MenuLayerExt.h"
+#include "Encryption/Encryption.h"
+#include "ZLIB/zlib.h"
+#include "GDPSManager.h"
+#include "obfuscate.h"
+#include "layers/advancedOptionsLayer.h"
+#include "layers/CreditsLayer.h"
+#include "layers/ToolsLayer.h"
+#include "hooks/MenuLayerExt.h"
 
 template <class T>
 extern void *getPointer(T value);

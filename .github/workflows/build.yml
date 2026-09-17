@@ -10,11 +10,18 @@ permissions:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    # NDK r16b depends on the legacy ncurses 5 runtime, which is not available
+    # on the current ubuntu-latest image.
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+
+      - name: Install NDK r16b runtime dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes libncurses5
 
       - name: Set up Android NDK r16b
         uses: nttld/setup-ndk@v1
@@ -23,7 +30,7 @@ jobs:
           add-to-path: true
 
       - name: Build native library
-        run: ndk-build
+        run: ndk-build NDK_PROJECT_PATH="$GITHUB_WORKSPACE"
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
