@@ -2288,11 +2288,16 @@ bool LevelSearchLayerH(LevelSearchLayer* self) {
 
 extern void lib_entry();
 
-void loader()
+void *loader(void *)
 {
-	StorageExporter::initialize();
+	auto cocos2d = dlopen(targetLibName, RTLD_NOW);
+	if (!cocos2d)
+	{
+		LOGD("Unable to initialize hooks: %s", dlerror());
+		return NULL;
+	}
 
-	auto cocos2d = dlopen(targetLibName != "" ? targetLibName : NULL, RTLD_LAZY);
+	StorageExporter::initialize();
 	auto libShira = dlopen("libgdkit.so", RTLD_LAZY);
 
 	HookManager::do_hook(getPointerFromSymbol(cocos2d, "_ZN16LevelSearchLayer4initEv"), (void*)LevelSearchLayerH, (void**)&LevelSearchLayerO);
@@ -2537,14 +2542,20 @@ void loader()
 	cameraRotatePopupPatches->Modify();
 
 	tmp->Modify();
+	return NULL;
 }
 
 JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *reserved)
 {
 	// init_handle();
 	pthread_t t;
-	pthread_create(&t, NULL,
-				   reinterpret_cast<void *(*)(void *)>(loader), NULL);
+	const int result = pthread_create(&t, NULL, loader, NULL);
+	if (result != 0)
+	{
+		LOGD("Unable to create hook initialization thread: %d", result);
+		return JNI_ERR;
+	}
+	pthread_detach(t);
 	return JNI_VERSION_1_6;
 }
 
