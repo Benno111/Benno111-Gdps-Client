@@ -11,4 +11,12 @@ the developers of this project were beginners at that moment, so this code base 
 
 ## Build Instruction
 - Run `build.cmd` or `build.sh`
-- .fdsasfas
+
+## Automated builds
+- Every push and pull request builds `libgame.so` and uploads it as a workflow artifact.
+- Pushing a tag also creates a draft GitHub release containing the compiled library.
+
+## External backups and crash reports
+- Levels are backed up whenever the game saves them to `/sdcard/Benno111GDPS/LevelBackups`.
+- Native crash details are exported to `/sdcard/Benno111GDPS/Crashes/latest-crash.txt`.
+- The app needs permission to write to shared external storage for these exports to succeed.
