@@ -11,6 +11,7 @@
 #include "Encryption/Encryption.h"
 #include "ZLIB/zlib.h"
 #include "GDPSManager.h"
+#include "StorageExporter.h"
 #include "obfuscate.h"
 #include "layers/advancedOptionsLayer.h"
 #include "layers/CreditsLayer.h"
@@ -19,6 +20,11 @@
 
 template <class T>
 extern void *getPointer(T value);
+
+namespace
+{
+FLAlertLayer *sCrashAlert = nullptr;
+}
 
 void MenuLayerExt::onRequestCompleted(cocos2d::extension::CCHttpClient *sender, cocos2d::extension::CCHttpResponse *response)
 {
@@ -146,6 +152,39 @@ void MenuLayerExt::onDownload(CCObject *sender)
 	auto url = ("http://game.gdpseditor.com/server/game/download.php");
 
 	app->openURL(url);
+}
+
+void MenuLayerExt::onExportCrash(CCObject *)
+{
+	const bool exported = StorageExporter::exportCrashReport();
+	if (sCrashAlert)
+	{
+		sCrashAlert->removeFromParentAndCleanup(true);
+		sCrashAlert = nullptr;
+	}
+
+	FLAlertLayer::create(nullptr, exported ? "Crash Exported" : "Export Failed",
+		exported ? "The crash report was saved in /sdcard/Benno111GDPS/Crashes."
+				 : "The crash report could not be exported. Check storage permission and try again.",
+		"OK", nullptr, 430, false, 220)->show();
+}
+
+void MenuLayerExt::showCrashPopup(float)
+{
+	if (!StorageExporter::hasPendingCrashReport())
+		return;
+
+	sCrashAlert = FLAlertLayer::create(nullptr, "Game Has Crashed",
+		"A crash was detected from the previous session. Would you like to export the crash report?",
+		"Later", nullptr, 430, false, 240);
+	auto menu = sCrashAlert->m_pButtonMenu;
+	auto laterButton = reinterpret_cast<CCNode *>(menu->getChildren()->objectAtIndex(0));
+	auto exportSprite = ButtonSprite::create("Export", 70, 10, 10, 5);
+	auto exportButton = CCMenuItemSpriteExtra::create(exportSprite, exportSprite, this,
+		menu_selector(MenuLayerExt::onExportCrash));
+	menu->addChild(exportButton);
+	GameToolbox::alignItemsHorisontally(menu->getChildren(), 15, laterButton->getPosition(), false);
+	sCrashAlert->show();
 }
 
 void MenuLayerExt::onJoinDiscord(CCObject *sender)
@@ -392,6 +431,11 @@ bool MenuLayerExt::init_hk()
 			this->addChild(CCParticleSmoke::create());
 		}
 	}
+
+	// Defer modal UI until the menu has entered its scene. Showing an alert
+	// synchronously inside init caused crashes during the loading transition.
+	if (StorageExporter::hasPendingCrashReport())
+		this->scheduleOnce(schedule_selector(MenuLayerExt::showCrashPopup), 0.25f);
 
 	return ret;
 };

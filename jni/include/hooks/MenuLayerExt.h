@@ -226,6 +226,8 @@ void onRequestCompleted(cocos2d::extension::CCHttpClient *sender, cocos2d::exten
 		
 	
     void onDownload(CCObject* sender);
+    void onExportCrash(CCObject* sender);
+    void showCrashPopup(float dt);
     void onJoinDiscord(CCObject* sender);
 	void onUpdate(float dt) {
 		//add all this extern shit to a class or something
