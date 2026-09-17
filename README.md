@@ -13,8 +13,8 @@ the developers of this project were beginners at that moment, so this code base 
 - Run `build.cmd` or `build.sh`
 
 ## Automated builds
-- Every push and pull request builds `libgame.so` and uploads it as a workflow artifact.
-- Pushing a tag also creates a draft GitHub release containing the compiled library.
+- Every push and pull request uploads all native libraries produced in `libs/armeabi-v7a` as a workflow artifact.
+- Pushing a tag also creates a draft GitHub release containing all of those native libraries.
 
 ## External backups and crash reports
 - Levels are backed up whenever the game saves them to `/sdcard/Benno111GDPS/LevelBackups`.

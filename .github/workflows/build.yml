@@ -32,11 +32,16 @@ jobs:
       - name: Build native library
         run: ndk-build NDK_PROJECT_PATH="$GITHUB_WORKSPACE"
 
-      - name: Upload build artifact
+      - name: Verify native libraries
+        run: |
+          test -f libs/armeabi-v7a/libgame.so
+          find libs/armeabi-v7a -maxdepth 1 -type f -name '*.so' -print
+
+      - name: Upload native libraries
         uses: actions/upload-artifact@v4
         with:
           name: gdps-client-armeabi-v7a
-          path: libs/armeabi-v7a/libgame.so
+          path: libs/armeabi-v7a/*.so
           if-no-files-found: error
 
       - name: Create draft release
@@ -44,4 +49,4 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           draft: true
-          files: libs/armeabi-v7a/libgame.so
+          files: libs/armeabi-v7a/*.so
