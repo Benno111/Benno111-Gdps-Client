@@ -3,7 +3,7 @@
 
 #include "CCObject.h"
 #include "GDAPI_Macros.h"
-#include "CCBKeyframe.h"
+#include "CCBKeyFrame.h"
 
 NS_CC_EXT_BEGIN
 /**

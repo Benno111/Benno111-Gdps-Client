@@ -1,4 +1,4 @@
-#include "Includes/Logger.h"
+#include "Logger.h"
 #include "gd.h"
 #include <dirent.h>
 #include <paths.h>

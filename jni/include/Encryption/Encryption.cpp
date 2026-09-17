@@ -1,6 +1,7 @@
 #include "Encryption.h"
 #include "Base64/base64.h"
 #include "zlib.h"
+#include <cstring>
 #include <sstream>
 
 

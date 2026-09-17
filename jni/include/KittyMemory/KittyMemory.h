@@ -7,6 +7,7 @@
 #pragma once
 
 #include <stdio.h>
+#include <stdint.h>
 #include <unistd.h>
 #include <sys/mman.h>
 #include <vector>

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "obb2d.h"
+#include "OBB2D.h"
 #include "GameObject.h"
 #include "PlayerObject.h"
 #include "LevelSettingsObject.h"
@@ -237,4 +237,4 @@ public:
     virtual cocos2d::CCParticleSystemQuad* createCustomParticle( std::string );
     virtual cocos2d::CCParticleSystemQuad* claimCustomParticle( std::string, int, int );
     virtual void unclaimCustomParticle( std::string, cocos2d::CCParticleSystemQuad* );
-}; 
+};

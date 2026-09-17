@@ -22,14 +22,16 @@
 #include "hooks/CreatorLayerExt.h"
 #include "hooks/onPlaytestExt.h"
 #include "GDPSManager.h"
+#include "StorageExporter.h"
 #include "layers/GDPSSettings.h"
 #include <gd.h>
 #include <hooking.h>
 #include <CCFileUtils.h>
-#include "../Encryption/Encryption.h"
-#include "../ZLIB/zlib.h"
+#include "Encryption/Encryption.h"
+#include "ZLIB/zlib.h"
 #include <string>
 #include <iostream>
+#include <numeric>
 #include <cocos2dx/extensions/CCScale9Sprite.h>
 #include "LevelBrowserLayer.h"
 #include "GJSearchObject.h"
@@ -138,12 +140,14 @@ char const *(*loading_trp)(LoadingLayer *);
 char const *loading_hook(LoadingLayer *layer)
 {
 
-	const char *server = AY_OBFUSCATE("http://game.gdpseditor.com/server");
+	// changeServers patches a fixed 33-byte slot, so keep the shorter URL padded
+	// with null bytes to ensure no characters from the previous URL remain.
+	const char *server = AY_OBFUSCATE("https://benno111.ps.fhgdps.com/\0\0");
 	// const char* server = AY_OBFUSCATE("http://game.gdpseditor.com/servel");
 
 	// const char* server = AY_OBFUSCATE("http://gmdpseditor.7m.pl/database"); // testing on old server
 
-	const char *server_b64 = AY_OBFUSCATE("aHR0cDovL2dhbWUuZ2Rwc2VkaXRvci5jb20vc2VydmVy");
+	const char *server_b64 = AY_OBFUSCATE("aHR0cHM6Ly9iZW5ubzExMS5wcy5maGdkcHMuY29tLw==");
 	// const char* server_b64 = AY_OBFUSCATE("aHR0cDovL2dhbWUuZ2Rwc2VkaXRvci5jb20vc2VydmVs");
 	// const char* server_b64 = AY_OBFUSCATE("aHR0cDovL2dtZHBzZWRpdG9yLjdtLnBsL2RhdGFiYXNl"); // testing on old server
 
@@ -337,6 +341,15 @@ void save_hook(void *self)
 {
 	GDPSManager::sharedState()->save();
 	return save_trp(self);
+}
+
+void (*saveLevel_trp)(GameLevelManager *, GJGameLevel *);
+void saveLevel_hook(GameLevelManager *manager, GJGameLevel *level)
+{
+	// Export before the game's save routine so a backup still exists if that
+	// routine itself is what triggers a crash.
+	StorageExporter::backupLevel(level);
+	saveLevel_trp(manager, level);
 }
 
 void OptionsLayer::onGDPSSettings(CCObject *sender)
@@ -2277,6 +2290,7 @@ extern void lib_entry();
 
 void loader()
 {
+	StorageExporter::initialize();
 
 	auto cocos2d = dlopen(targetLibName != "" ? targetLibName : NULL, RTLD_LAZY);
 	auto libShira = dlopen("libgdkit.so", RTLD_LAZY);
@@ -2335,6 +2349,7 @@ void loader()
 	HookManager::do_hook(getPointerFromSymbol(cocos2d, "_ZN9PlayLayer6updateEf"), getPointer(&PlayLayerExt::update_hk), (void **)&PlayLayerExt::update_trp);
 	HookManager::do_hook(getPointerFromSymbol(cocos2d, "_ZN16LevelEditorLayer10onPlaytestEv"), getPointer(&onPlaytestExt::playtest_hk), (void **)&onPlaytestExt::playtest);
 	HookManager::do_hook(getPointerFromSymbol(cocos2d, "_ZN11AppDelegate11trySaveGameEb"), (void *)save_hook, (void **)&save_trp);
+	HookManager::do_hook(getPointerFromSymbol(cocos2d, "_ZN16GameLevelManager9saveLevelEP11GJGameLevel"), (void *)saveLevel_hook, (void **)&saveLevel_trp);
 	HookManager::do_hook(getPointerFromSymbol(cocos2d, "_ZN10GameObject13createWithKeyEi"), (void *)create_hk, (void **)&old4);
 	HookManager::do_hook(getPointerFromSymbol(cocos2d, "_ZN12OptionsLayer11customSetupEv"), (void *)OptionsLayer_customSetup_hk, (void **)&ol_customSetup_trp);
 	HookManager::do_hook(getPointerFromSymbol(cocos2d, "_ZN16MoreOptionsLayer9addToggleEPKcS1_S1_"), getPointer(&MoreOptionsLayerExt::addToggle_hk), (void **)&MoreOptionsLayerExt::addToggle_trp);
