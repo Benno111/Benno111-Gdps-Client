@@ -268,21 +268,78 @@ GameObject *create_hk(int key)
 
 bool isGauntlet = false;
 CCSpriteFrame *(*old5)(CCSpriteFrameCache *, const char *) = nullptr;
+
+CCSpriteFrame *missingTextureFrame(CCSpriteFrameCache *cache)
+{
+	static const char *const placeholderName = "__gdps_missing_texture__";
+	auto frame = old5(cache, placeholderName);
+	if (frame)
+		return frame;
+
+	// Generate a small magenta/black checkerboard so missing packaged assets do
+	// not need another asset that could itself be absent.
+	static unsigned char pixels[16 * 16 * 4];
+	static bool pixelsInitialized = false;
+	if (!pixelsInitialized)
+	{
+		for (unsigned int y = 0; y < 16; ++y)
+		{
+			for (unsigned int x = 0; x < 16; ++x)
+			{
+				const bool magenta = ((x / 4) + (y / 4)) % 2 == 0;
+				const unsigned int offset = (y * 16 + x) * 4;
+				pixels[offset] = magenta ? 255 : 0;
+				pixels[offset + 1] = 0;
+				pixels[offset + 2] = magenta ? 255 : 0;
+				pixels[offset + 3] = 255;
+			}
+		}
+		pixelsInitialized = true;
+	}
+	auto texture = new CCTexture2D();
+	if (!texture->initWithData(pixels, kCCTexture2DPixelFormat_RGBA8888, 16, 16, CCSize(16, 16)))
+	{
+		texture->release();
+		return nullptr;
+	}
+
+	frame = CCSpriteFrame::createWithTexture(texture, CCRect(0, 0, 16, 16));
+	if (frame)
+	{
+		frame->setFrameName(placeholderName);
+		cache->addSpriteFrame(frame, placeholderName);
+	}
+	texture->release();
+	return frame;
+}
+
+CCSpriteFrame *spriteFrameOrPlaceholder(CCSpriteFrameCache *cache, const char *name)
+{
+	auto frame = name ? old5(cache, name) : nullptr;
+	if (frame)
+		return frame;
+
+	LOGD("Missing sprite frame: %s; using placeholder", name ? name : "<null>");
+	return missingTextureFrame(cache);
+}
+
 CCSpriteFrame *sprite_hk(CCSpriteFrameCache *ptr, const char *s)
 {
+	if (!s)
+		return missingTextureFrame(ptr);
 
 	if (!strcmp(s, "GJ_fullBtn_001.png"))
-		return old5(ptr, "GJ_creatorBtn_001.png");
+		return spriteFrameOrPlaceholder(ptr, "GJ_creatorBtn_001.png");
 
 	if (!strcmp(s, "GJ_freeLevelsBtn_001.png"))
-		return old5(ptr, "GJ_moreGamesBtn_001.png");
+		return spriteFrameOrPlaceholder(ptr, "GJ_moreGamesBtn_001.png");
 
 	if (!strcmp(s, "GJ_stuffTxt_001.png") ||
 		!strcmp(s, "GJ_twitterTxt_001.png") ||
 		!strcmp(s, "GJ_youtubeTxt_001.png") ||
 		!strcmp(s, "GJ_twitchTxt_001.png") ||
 		!strcmp(s, "GJ_freeStuffBtn_001.png"))
-		return old5(ptr, "transparent.png");
+		return spriteFrameOrPlaceholder(ptr, "transparent.png");
 
 	if (!strcmp(s, "GJ_epicCoin2_001.png"))
 	{
@@ -290,11 +347,11 @@ CCSpriteFrame *sprite_hk(CCSpriteFrameCache *ptr, const char *s)
 		if (GM->getIntGameVariable("52342") >= 3)
 		{
 
-			return old5(ptr, "GJ_epicCoin3_001.png");
+			return spriteFrameOrPlaceholder(ptr, "GJ_epicCoin3_001.png");
 		}
 		else
 		{
-			return old5(ptr, s);
+			return spriteFrameOrPlaceholder(ptr, s);
 		}
 	}
 
@@ -310,11 +367,11 @@ CCSpriteFrame *sprite_hk(CCSpriteFrameCache *ptr, const char *s)
 			if (!isSpider)
 			{
 				isSpider = true;
-				return old5(ptr, "gj_spiderBtn_off_001.png");
+				return spriteFrameOrPlaceholder(ptr, "gj_spiderBtn_off_001.png");
 			}
 			{
 				isSpider = false;
-				return old5(ptr, "gj_swingBtn_off_001.png");
+				return spriteFrameOrPlaceholder(ptr, "gj_swingBtn_off_001.png");
 			}
 		}
 
@@ -325,16 +382,16 @@ CCSpriteFrame *sprite_hk(CCSpriteFrameCache *ptr, const char *s)
 			if (!isSpider2)
 			{
 				isSpider2 = true;
-				return old5(ptr, "gj_spiderBtn_on_001.png");
+				return spriteFrameOrPlaceholder(ptr, "gj_spiderBtn_on_001.png");
 			}
 			{
 				isSpider2 = false;
-				return old5(ptr, "gj_swingBtn_on_001.png");
+				return spriteFrameOrPlaceholder(ptr, "gj_swingBtn_on_001.png");
 			}
 		}
 	}
 
-	return old5(ptr, s);
+	return spriteFrameOrPlaceholder(ptr, s);
 }
 
 void (*save_trp)(void *);

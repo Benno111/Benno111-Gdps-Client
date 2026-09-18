@@ -20,3 +20,6 @@ the developers of this project were beginners at that moment, so this code base 
 - Levels are backed up whenever the game saves them to `/sdcard/Benno111GDPS/LevelBackups`.
 - After a native crash, the main menu offers to export a timestamped report to `/sdcard/Benno111GDPS/Crashes`.
 - The app needs permission to write to shared external storage for these exports to succeed.
+
+## Missing textures
+- Missing sprite frames are replaced with a generated magenta-and-black checkerboard instead of returning a null frame that can crash the game.
