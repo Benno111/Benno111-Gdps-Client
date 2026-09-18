@@ -1,4 +1,9 @@
 #pragma once
+
+#include "cocos2d.h"
+
+#include <string>
+
 #define GDPS GDPSManager::sharedState()
 
 
@@ -15,13 +20,14 @@ public:
     bool networkDebug;
 	
 	public:
-    void createToggleButton(const char*, CCPoint, CCObject*, cocos2d::SEL_MenuHandler, CCMenu*, bool, bool);
+    void createToggleButton(const char*, cocos2d::CCPoint, cocos2d::CCObject*,
+                            cocos2d::SEL_MenuHandler, cocos2d::CCMenu*, bool, bool);
 
 
 protected:
     bool init();
-    void encodeDataTo(CCDictionary * data);
-    void dataLoaded(CCDictionary* data);
+    void encodeDataTo(cocos2d::CCDictionary * data);
+    void dataLoaded(cocos2d::CCDictionary* data);
     void firstLoad();
     void setup();
     void load();
@@ -38,9 +44,9 @@ public:
 	void setPlayerSwing(int id);
 	void setPlayerJetpack(int id);
 	void setWorldIsland(int id);
-	string itos(int Number);
+	std::string itos(int Number);
 
 protected:
-    CCDictionary * dictionary = nullptr;
+    cocos2d::CCDictionary * dictionary = nullptr;
     std::string m_sFileName;
 };
