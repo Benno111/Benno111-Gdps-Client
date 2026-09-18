@@ -119,14 +119,14 @@ bool ToolsLayer::init()
     tool6->setScale(scale);
     misc->addChild(toolBtn6);
 
-    auto copySprite = ButtonSprite::create("Copy Files", 90, 10, 10, 5);
-    auto copyButton = CCMenuItemSpriteExtra::create(
-        copySprite,
-        copySprite,
+    auto exportSprite = ButtonSprite::create("Export Save", 100, 10, 10, 5);
+    auto exportButton = CCMenuItemSpriteExtra::create(
+        exportSprite,
+        exportSprite,
         this,
-        menu_selector(ToolsLayer::onCopyGameFiles));
-    copyButton->setPosition(referenceX, referenceY - 50);
-    misc->addChild(copyButton, 50);
+        menu_selector(ToolsLayer::onExportSaveFiles));
+    exportButton->setPosition(referenceX, referenceY - 50);
+    misc->addChild(exportButton, 50);
 
     // this->addChild(m);
 
@@ -136,14 +136,14 @@ bool ToolsLayer::init()
     return true;
 }
 
-void ToolsLayer::onCopyGameFiles(CCObject *)
+void ToolsLayer::onExportSaveFiles(CCObject *)
 {
-    const unsigned copied = StorageExporter::copySaveFiles();
-    const char *message = copied == 2
-        ? "CCGameManager.dat and CCLocalLevels.dat were copied to /sdcard/Benno111GDPS/GameFiles."
-        : copied == 1
-            ? "One save file was copied. The other file was missing or could not be read."
-            : "No save files were copied. Check that the files exist and storage permission is granted.";
-    FLAlertLayer::create(nullptr, copied ? "Files Copied" : "Copy Failed",
+    const unsigned exported = StorageExporter::exportSaveFiles();
+    const char *message = exported == 2
+        ? "CCGameManager.dat and CCLocalLevels.dat were exported to /sdcard/Benno111GDPS/GameFiles."
+        : exported == 1
+            ? "One save file was exported. The other file was missing or could not be read."
+            : "No save files were exported. Check that the files exist and storage permission is granted.";
+    FLAlertLayer::create(nullptr, exported ? "Save Exported" : "Export Failed",
                          message, "OK", nullptr, 400, false, 300)->show();
 }

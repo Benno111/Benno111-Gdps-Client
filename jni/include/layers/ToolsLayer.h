@@ -90,7 +90,7 @@ void onUnlisted(CCObject*){
 cocos2d::CCApplication::sharedApplication()->openURL("https://gdpseditor.com/unlisted");
 }
 
-void onCopyGameFiles(CCObject*);
+void onExportSaveFiles(CCObject*);
 		
 
     CREATE_FUNC(ToolsLayer)

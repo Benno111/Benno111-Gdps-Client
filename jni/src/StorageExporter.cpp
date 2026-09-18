@@ -212,7 +212,7 @@ bool StorageExporter::copyGameFile(const std::string &fileName)
     return output.good() && !input.bad();
 }
 
-unsigned StorageExporter::copySaveFiles()
+unsigned StorageExporter::exportSaveFiles()
 {
     unsigned copied = 0;
     if (copyGameFile("CCGameManager.dat"))

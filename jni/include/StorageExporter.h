@@ -17,8 +17,8 @@ namespace StorageExporter
     // rejected so this cannot be used to read files the game does not own.
     bool copyGameFile(const std::string &fileName);
 
-    // Copies the two Geometry Dash save files and returns the number copied.
-    unsigned copySaveFiles();
+    // Exports the two Geometry Dash save files and returns the number exported.
+    unsigned exportSaveFiles();
 
     // A crash report is kept pending until the player chooses to export it.
     bool hasPendingCrashReport();
