@@ -16,6 +16,7 @@ namespace
 const char *const kExportRoot = "/sdcard/Benno111GDPS";
 const char *const kBackupDirectory = "/sdcard/Benno111GDPS/LevelBackups";
 const char *const kCrashDirectory = "/sdcard/Benno111GDPS/Crashes";
+const char *const kPendingCrashReport = "/sdcard/Benno111GDPS/Crashes/latest-crash.txt";
 
 volatile sig_atomic_t sHandlingCrash = 0;
 
@@ -83,7 +84,7 @@ void crashHandler(int signalNumber, siginfo_t *info, void *)
     appendText(report, sizeof(report), length,
                "\n\nThe Android system tombstone/logcat may contain a full native stack trace.\n");
 
-    const int file = open("/sdcard/Benno111GDPS/Crashes/latest-crash.txt",
+    const int file = open(kPendingCrashReport,
                           O_WRONLY | O_CREAT | O_TRUNC, 0664);
     if (file >= 0)
     {
@@ -162,4 +163,35 @@ bool StorageExporter::backupLevel(const GJGameLevel *level)
     output << "\nlevel_data_end\n";
     output.close();
     return output.good();
+}
+
+bool StorageExporter::hasPendingCrashReport()
+{
+    return access(kPendingCrashReport, F_OK) == 0;
+}
+
+bool StorageExporter::exportCrashReport()
+{
+    std::ifstream input(kPendingCrashReport, std::ios::in | std::ios::binary);
+    if (!input)
+        return false;
+
+    createExportDirectories();
+    struct timeval now;
+    gettimeofday(&now, 0);
+
+    char path[384];
+    snprintf(path, sizeof(path), "%s/crash-%ld-%ld.txt", kCrashDirectory,
+             static_cast<long>(now.tv_sec), static_cast<long>(now.tv_usec));
+    std::ofstream output(path, std::ios::out | std::ios::binary | std::ios::trunc);
+    if (!output)
+        return false;
+
+    output << input.rdbuf();
+    output.close();
+    input.close();
+    if (!output.good())
+        return false;
+
+    return unlink(kPendingCrashReport) == 0;
 }
