@@ -1,6 +1,7 @@
 #include "StorageExporter.h"
 
 #include "GJGameLevel.h"
+#include "cocos2d.h"
 
 #include <csignal>
 #include <cstdio>
@@ -16,6 +17,7 @@ namespace
 const char *const kExportRoot = "/sdcard/Benno111GDPS";
 const char *const kBackupDirectory = "/sdcard/Benno111GDPS/LevelBackups";
 const char *const kCrashDirectory = "/sdcard/Benno111GDPS/Crashes";
+const char *const kGameFilesDirectory = "/sdcard/Benno111GDPS/GameFiles";
 const char *const kPendingCrashReport = "/sdcard/Benno111GDPS/Crashes/latest-crash.txt";
 
 volatile sig_atomic_t sHandlingCrash = 0;
@@ -28,6 +30,7 @@ void createExportDirectories()
     mkdir(kExportRoot, 0775);
     mkdir(kBackupDirectory, 0775);
     mkdir(kCrashDirectory, 0775);
+    mkdir(kGameFilesDirectory, 0775);
 }
 
 void appendText(char *buffer, size_t capacity, size_t &length, const char *text)
@@ -117,11 +120,21 @@ std::string safeFilename(const std::string &name)
         const unsigned char character = static_cast<unsigned char>(*it);
         result += ((character >= 'a' && character <= 'z') ||
                    (character >= 'A' && character <= 'Z') ||
-                   (character >= '0' && character <= '9') || character == '-' || character == '_')
+                   (character >= '0' && character <= '9') || character == '-' ||
+                   character == '_' || character == '.')
                       ? static_cast<char>(character)
                       : '_';
     }
     return result.empty() ? "unnamed" : result;
+}
+
+bool isSimpleFilename(const std::string &name)
+{
+    if (name.empty() || name == "." || name == "..")
+        return false;
+
+    return name.find('/') == std::string::npos &&
+           name.find('\\') == std::string::npos;
 }
 } // namespace
 
@@ -163,6 +176,50 @@ bool StorageExporter::backupLevel(const GJGameLevel *level)
     output << "\nlevel_data_end\n";
     output.close();
     return output.good();
+}
+
+bool StorageExporter::copyGameFile(const std::string &fileName)
+{
+    if (!isSimpleFilename(fileName))
+        return false;
+
+    const std::string sourcePath =
+        cocos2d::CCFileUtils::sharedFileUtils()->getWritablePath() + fileName;
+    struct stat sourceInfo;
+    if (lstat(sourcePath.c_str(), &sourceInfo) != 0 ||
+        !S_ISREG(sourceInfo.st_mode) || sourceInfo.st_uid != geteuid())
+        return false;
+
+    std::ifstream input(sourcePath.c_str(), std::ios::in | std::ios::binary);
+    if (!input)
+        return false;
+
+    createExportDirectories();
+    struct timeval now;
+    gettimeofday(&now, 0);
+    char destinationPath[384];
+    snprintf(destinationPath, sizeof(destinationPath), "%s/%ld-%ld-%s",
+             kGameFilesDirectory, static_cast<long>(now.tv_sec),
+             static_cast<long>(now.tv_usec), safeFilename(fileName).c_str());
+
+    std::ofstream output(destinationPath,
+                         std::ios::out | std::ios::binary | std::ios::trunc);
+    if (!output)
+        return false;
+
+    output << input.rdbuf();
+    output.close();
+    return output.good() && !input.bad();
+}
+
+unsigned StorageExporter::copySaveFiles()
+{
+    unsigned copied = 0;
+    if (copyGameFile("CCGameManager.dat"))
+        ++copied;
+    if (copyGameFile("CCLocalLevels.dat"))
+        ++copied;
+    return copied;
 }
 
 bool StorageExporter::hasPendingCrashReport()

@@ -3,6 +3,7 @@
 #include <sstream>
 #include "cocos2d.h"
 #include "ToolsLayer.h"
+#include "StorageExporter.h"
 #include <cocos2dx_bak/extensions/GUI/CCControlExtension/CCScale9Sprite.h>
 
 bool ToolsLayer::init()
@@ -118,10 +119,31 @@ bool ToolsLayer::init()
     tool6->setScale(scale);
     misc->addChild(toolBtn6);
 
+    auto copySprite = ButtonSprite::create("Copy Files", 90, 10, 10, 5);
+    auto copyButton = CCMenuItemSpriteExtra::create(
+        copySprite,
+        copySprite,
+        this,
+        menu_selector(ToolsLayer::onCopyGameFiles));
+    copyButton->setPosition(referenceX, referenceY - 50);
+    misc->addChild(copyButton, 50);
+
     // this->addChild(m);
 
     this->setTouchEnabled(true);
     this->setKeypadEnabled(true);
 
     return true;
+}
+
+void ToolsLayer::onCopyGameFiles(CCObject *)
+{
+    const unsigned copied = StorageExporter::copySaveFiles();
+    const char *message = copied == 2
+        ? "CCGameManager.dat and CCLocalLevels.dat were copied to /sdcard/Benno111GDPS/GameFiles."
+        : copied == 1
+            ? "One save file was copied. The other file was missing or could not be read."
+            : "No save files were copied. Check that the files exist and storage permission is granted.";
+    FLAlertLayer::create(nullptr, copied ? "Files Copied" : "Copy Failed",
+                         message, "OK", nullptr, 400, false, 300)->show();
 }

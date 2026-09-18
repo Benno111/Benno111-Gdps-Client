@@ -19,6 +19,7 @@ the developers of this project were beginners at that moment, so this code base 
 ## External backups and crash reports
 - Levels are backed up whenever the game saves them to `/sdcard/Benno111GDPS/LevelBackups`.
 - After a native crash, the main menu offers to export a timestamped report to `/sdcard/Benno111GDPS/Crashes`.
+- The Tools menu can copy the game-owned `CCGameManager.dat` and `CCLocalLevels.dat` save files to `/sdcard/Benno111GDPS/GameFiles` for safekeeping.
 - The app needs permission to write to shared external storage for these exports to succeed.
 
 ## Missing textures

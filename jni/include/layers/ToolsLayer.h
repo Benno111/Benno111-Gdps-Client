@@ -89,6 +89,8 @@ cocos2d::CCApplication::sharedApplication()->openURL("https://gdpseditor.com/gdb
 void onUnlisted(CCObject*){
 cocos2d::CCApplication::sharedApplication()->openURL("https://gdpseditor.com/unlisted");
 }
+
+void onCopyGameFiles(CCObject*);
 		
 
     CREATE_FUNC(ToolsLayer)
