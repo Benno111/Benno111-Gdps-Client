@@ -391,11 +391,11 @@ CCSpriteFrame *sprite_hk(CCSpriteFrameCache *ptr, const char *s)
 	return spriteFrameOrPlaceholder(ptr, s);
 }
 
-void (*save_trp)(void *);
-void save_hook(void *self)
+void (*save_trp)(void *, bool);
+void save_hook(void *self, bool flush)
 {
 	GDPSManager::sharedState()->save();
-	return save_trp(self);
+	save_trp(self, flush);
 }
 
 void (*saveLevel_trp)(GameLevelManager *, GJGameLevel *);
@@ -1820,6 +1820,22 @@ GJUserScore *GJUserScore_createH(CCDictionary *userData)
 }
 
 const char *(*CCString_getCStringO)(CCString *);
+
+bool replaceRequestNumber(std::string &request, const char *key, int value)
+{
+	const std::string prefix = std::string(key) + "=";
+	auto start = request.find(prefix);
+	if (start == std::string::npos)
+		return false;
+
+	start += prefix.size();
+	auto end = start;
+	while (end < request.size() && request[end] >= '0' && request[end] <= '9')
+		++end;
+	request.replace(start, end - start, itos(value));
+	return true;
+}
+
 const char *CCString_getCStringH(CCString *self)
 {
 	auto ret = CCString_getCStringO(self);
@@ -1869,6 +1885,18 @@ const char *CCString_getCStringH(CCString *self)
 		strcat(s, toAdd);
 
 		ret = s;
+	}
+
+	// A 2.208-based GDPS rejects requests carrying the old SubZero protocol
+	// numbers. Normalize every request that contains these standard fields.
+	std::string request(ret);
+	bool versionChanged = replaceRequestNumber(request, "gameVersion", GD_GAME_VERSION);
+	versionChanged = replaceRequestNumber(request, "binaryVersion", GD_BINARY_VERSION) || versionChanged;
+	if (versionChanged)
+	{
+		char *normalized = new char[request.size() + 1];
+		strcpy(normalized, request.c_str());
+		ret = normalized;
 	}
 
 	return ret;

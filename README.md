@@ -23,3 +23,7 @@ the developers of this project were beginners at that moment, so this code base 
 
 ## Missing textures
 - Missing sprite frames are replaced with a generated magenta-and-black checkerboard instead of returning a null frame that can crash the game.
+
+## Compatibility
+- Network requests advertise Geometry Dash game version `22` and binary version `46` for GDPS servers based on Geometry Dash 2.208.
+- The mod save hook preserves the game's flush argument, and missing or incomplete mod save data falls back to safe defaults.

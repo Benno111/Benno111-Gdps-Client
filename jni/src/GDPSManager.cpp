@@ -37,16 +37,23 @@ void GDPSManager::encodeDataTo(CCDictionary *data)
 
 void GDPSManager::dataLoaded(CCDictionary *data)
 {
-    auto tpSettings = data->getDictionaryForKey("platform");
-    this->opacity = tpSettings->getIntForKey("opacity");
+	if (!data)
+	{
+		firstLoad();
+		return;
+	}
 
-    auto globalSettings = data->getDictionaryForKey("global");
-    this->oldTextures = globalSettings->getIntForKey("oldTextures");
+	auto tpSettings = data->getDictionaryForKey("platform");
+	this->opacity = tpSettings ? tpSettings->getIntForKey("opacity") : 255;
+
+	auto globalSettings = data->getDictionaryForKey("global");
+	this->oldTextures = globalSettings ? globalSettings->getIntForKey("oldTextures") : false;
 }
 
 void GDPSManager::firstLoad()
 {
-    opacity = 255;
+	opacity = 255;
+	oldTextures = false;
 }
 
 bool GDPSManager::init()
