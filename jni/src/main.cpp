@@ -305,10 +305,7 @@ CCSpriteFrame *missingTextureFrame(CCSpriteFrameCache *cache)
 
 	frame = CCSpriteFrame::createWithTexture(texture, CCRect(0, 0, 16, 16));
 	if (frame)
-	{
-		frame->setFrameName(placeholderName);
 		cache->addSpriteFrame(frame, placeholderName);
-	}
 	texture->release();
 	return frame;
 }
