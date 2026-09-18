@@ -3,6 +3,7 @@
 #include <sstream>
 #include "cocos2d.h"
 #include "ToolsLayer.h"
+#include "StorageExporter.h"
 #include <cocos2dx_bak/extensions/GUI/CCControlExtension/CCScale9Sprite.h>
 
 bool ToolsLayer::init()
@@ -118,10 +119,53 @@ bool ToolsLayer::init()
     tool6->setScale(scale);
     misc->addChild(toolBtn6);
 
+    auto exportSprite = ButtonSprite::create("Export Save", 100, 10, 10, 5);
+    auto exportButton = CCMenuItemSpriteExtra::create(
+        exportSprite,
+        exportSprite,
+        this,
+        menu_selector(ToolsLayer::onExportSaveFiles));
+    exportButton->setPosition(referenceX - 58, referenceY - 50);
+    misc->addChild(exportButton, 50);
+
+    auto debugSprite = ButtonSprite::create(
+        GDPS->networkDebug ? "Net Debug: ON" : "Net Debug: OFF", 110, 10, 10, 5);
+    auto debugButton = CCMenuItemSpriteExtra::create(
+        debugSprite,
+        debugSprite,
+        this,
+        menu_selector(ToolsLayer::onNetworkDebug));
+    debugButton->setPosition(referenceX + 58, referenceY - 50);
+    misc->addChild(debugButton, 50);
+
     // this->addChild(m);
 
     this->setTouchEnabled(true);
     this->setKeypadEnabled(true);
 
     return true;
+}
+
+void ToolsLayer::onExportSaveFiles(CCObject *)
+{
+    const unsigned exported = StorageExporter::exportSaveFiles();
+    const char *message = exported == 2
+        ? "CCGameManager.dat and CCLocalLevels.dat were exported to /sdcard/Benno111GDPS/GameFiles."
+        : exported == 1
+            ? "One save file was exported. The other file was missing or could not be read."
+            : "No save files were exported. Check that the files exist and storage permission is granted.";
+    FLAlertLayer::create(nullptr, exported ? "Save Exported" : "Export Failed",
+                         message, "OK", nullptr, 400, false, 300)->show();
+}
+
+void ToolsLayer::onNetworkDebug(CCObject *)
+{
+    GDPS->networkDebug = !GDPS->networkDebug;
+    GDPS->save();
+
+    FLAlertLayer::create(nullptr, "Networking Debug",
+        GDPS->networkDebug
+            ? "Enabled. Request method, URL, and sizes will be logged to logcat and /sdcard/Benno111GDPS/network-debug.log. Request bodies and query values are never logged."
+            : "Disabled. New network requests will no longer be logged.",
+        "OK", nullptr, 430, false, 300)->show();
 }

@@ -8,6 +8,7 @@ the developers of this project were beginners at that moment, so this code base 
 
 ## Setup
 - Add Android NDK to your path
+- Package the Android app with the application ID `com.gdpsedi.geometrydashsubzero`.
 
 ## Build Instruction
 - Run `build.cmd` or `build.sh`
@@ -19,7 +20,13 @@ the developers of this project were beginners at that moment, so this code base 
 ## External backups and crash reports
 - Levels are backed up whenever the game saves them to `/sdcard/Benno111GDPS/LevelBackups`.
 - After a native crash, the main menu offers to export a timestamped report to `/sdcard/Benno111GDPS/Crashes`.
+- The **Export Save** button in the Tools menu copies the game-owned `CCGameManager.dat` and `CCLocalLevels.dat` save files to `/sdcard/Benno111GDPS/GameFiles` for safekeeping.
 - The app needs permission to write to shared external storage for these exports to succeed.
+- When packaging the native library into the app, merge the included `WRITE_EXTERNAL_STORAGE` permission into the app manifest.
+
+## Networking debug mode
+- The **Net Debug** button in the Tools menu enables persistent request diagnostics in Android logcat and `/sdcard/Benno111GDPS/network-debug.log`.
+- Diagnostics contain the HTTP method, endpoint, body size, and header count. Request bodies and URL query values are deliberately omitted to avoid logging credentials.
 
 ## Missing textures
 - Missing sprite frames are replaced with a generated magenta-and-black checkerboard instead of returning a null frame that can crash the game.
