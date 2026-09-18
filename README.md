@@ -8,6 +8,7 @@ the developers of this project were beginners at that moment, so this code base 
 
 ## Setup
 - Add Android NDK to your path
+- Package the Android app with the application ID `com.gdpsedi.geometrydashsubzero`.
 
 ## Build Instruction
 - Run `build.cmd` or `build.sh`
