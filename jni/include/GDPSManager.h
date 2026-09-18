@@ -12,6 +12,7 @@ public:
     bool pauseBtn;
     bool oldTextures;
     bool cleanMenu;
+    bool networkDebug;
 	
 	public:
     void createToggleButton(const char*, CCPoint, CCObject*, cocos2d::SEL_MenuHandler, CCMenu*, bool, bool);

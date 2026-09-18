@@ -63,6 +63,7 @@ LOCAL_SRC_FILES := 	src/main.cpp \
 					src/layers/ToolsLayer.cpp \
 					include/Encryption/Base64/base64.cpp \
 					src/StorageExporter.cpp \
+					src/NetworkDebug.cpp \
 					src/GDPSManager.cpp \
 					src/layers/ObjectOptionsLayer.cpp \
 					src/layers/GDPSSettings.cpp \

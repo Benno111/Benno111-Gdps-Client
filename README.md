@@ -23,6 +23,10 @@ the developers of this project were beginners at that moment, so this code base 
 - The app needs permission to write to shared external storage for these exports to succeed.
 - When packaging the native library into the app, merge the included `WRITE_EXTERNAL_STORAGE` permission into the app manifest.
 
+## Networking debug mode
+- The **Net Debug** button in the Tools menu enables persistent request diagnostics in Android logcat and `/sdcard/Benno111GDPS/network-debug.log`.
+- Diagnostics contain the HTTP method, endpoint, body size, and header count. Request bodies and URL query values are deliberately omitted to avoid logging credentials.
+
 ## Missing textures
 - Missing sprite frames are replaced with a generated magenta-and-black checkerboard instead of returning a null frame that can crash the game.
 

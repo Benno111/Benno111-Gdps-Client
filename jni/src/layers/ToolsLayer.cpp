@@ -125,8 +125,18 @@ bool ToolsLayer::init()
         exportSprite,
         this,
         menu_selector(ToolsLayer::onExportSaveFiles));
-    exportButton->setPosition(referenceX, referenceY - 50);
+    exportButton->setPosition(referenceX - 58, referenceY - 50);
     misc->addChild(exportButton, 50);
+
+    auto debugSprite = ButtonSprite::create(
+        GDPS->networkDebug ? "Net Debug: ON" : "Net Debug: OFF", 110, 10, 10, 5);
+    auto debugButton = CCMenuItemSpriteExtra::create(
+        debugSprite,
+        debugSprite,
+        this,
+        menu_selector(ToolsLayer::onNetworkDebug));
+    debugButton->setPosition(referenceX + 58, referenceY - 50);
+    misc->addChild(debugButton, 50);
 
     // this->addChild(m);
 
@@ -146,4 +156,16 @@ void ToolsLayer::onExportSaveFiles(CCObject *)
             : "No save files were exported. Check that the files exist and storage permission is granted.";
     FLAlertLayer::create(nullptr, exported ? "Save Exported" : "Export Failed",
                          message, "OK", nullptr, 400, false, 300)->show();
+}
+
+void ToolsLayer::onNetworkDebug(CCObject *)
+{
+    GDPS->networkDebug = !GDPS->networkDebug;
+    GDPS->save();
+
+    FLAlertLayer::create(nullptr, "Networking Debug",
+        GDPS->networkDebug
+            ? "Enabled. Request method, URL, and sizes will be logged to logcat and /sdcard/Benno111GDPS/network-debug.log. Request bodies and query values are never logged."
+            : "Disabled. New network requests will no longer be logged.",
+        "OK", nullptr, 430, false, 300)->show();
 }

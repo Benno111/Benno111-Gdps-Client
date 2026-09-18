@@ -24,6 +24,7 @@
 #include "GDPSManager.h"
 #include "GDPSVersion.h"
 #include "StorageExporter.h"
+#include "NetworkDebug.h"
 #include "layers/GDPSSettings.h"
 #include <gd.h>
 #include <hooking.h>
@@ -2381,6 +2382,7 @@ void *loader(void *)
 	}
 
 	StorageExporter::initialize();
+	NetworkDebug::install(cocos2d);
 	auto libShira = dlopen("libgdkit.so", RTLD_LAZY);
 
 	HookManager::do_hook(getPointerFromSymbol(cocos2d, "_ZN16LevelSearchLayer4initEv"), (void*)LevelSearchLayerH, (void**)&LevelSearchLayerO);

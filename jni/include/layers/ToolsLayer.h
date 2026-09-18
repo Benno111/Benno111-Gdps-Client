@@ -91,6 +91,7 @@ cocos2d::CCApplication::sharedApplication()->openURL("https://gdpseditor.com/unl
 }
 
 void onExportSaveFiles(CCObject*);
+void onNetworkDebug(CCObject*);
 		
 
     CREATE_FUNC(ToolsLayer)

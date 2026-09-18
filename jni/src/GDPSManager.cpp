@@ -32,6 +32,7 @@ void GDPSManager::encodeDataTo(CCDictionary *data)
 
     auto globalDict = CCDictionary::create();
     globalDict->setIntForKey(this->oldTextures, "oldTextures");
+    globalDict->setIntForKey(this->networkDebug, "networkDebug");
     data->setDictionaryForKey(globalDict, "global");
 }
 
@@ -48,12 +49,14 @@ void GDPSManager::dataLoaded(CCDictionary *data)
 
 	auto globalSettings = data->getDictionaryForKey("global");
 	this->oldTextures = globalSettings ? globalSettings->getIntForKey("oldTextures") : false;
+	this->networkDebug = globalSettings ? globalSettings->getIntForKey("networkDebug") : false;
 }
 
 void GDPSManager::firstLoad()
 {
 	opacity = 255;
 	oldTextures = false;
+	networkDebug = false;
 }
 
 bool GDPSManager::init()
